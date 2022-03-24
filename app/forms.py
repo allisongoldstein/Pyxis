@@ -4,6 +4,7 @@ from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, BooleanField, SubmitField
 from wtforms.validators import DataRequired, ValidationError, Email, EqualTo
 from app.models import User
+from app.models import Card
 
 class LoginForm(FlaskForm):
     username = StringField('Username', validators=[DataRequired()])
@@ -28,3 +29,13 @@ class RegistrationForm(FlaskForm):
         user = User.query.filter_by(email=email.data).first()
         if user is not None:
             raise ValidationError('Please use a different email address.')
+
+class AddCard(FlaskForm):
+    word = StringField('Word', validators=[DataRequired()])
+    translation = StringField('Translation')
+    submit = SubmitField('Add')
+
+    def validate_word(self, word):
+        w = Card.query.filter_by(word=word.data).first()
+        if w is not None:
+            raise ValidationError('Word already in deck.')

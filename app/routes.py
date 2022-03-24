@@ -7,9 +7,9 @@ from flask_login import logout_user
 from flask_login import login_required
 from flask import request
 from werkzeug.urls import url_parse
-from app.models import User
+from app.models import Card, User
 from app import db
-from app.forms import RegistrationForm
+from app.forms import RegistrationForm, AddCard
 
 @app.route('/')
 @app.route('/index')
@@ -42,7 +42,7 @@ def logout():
     logout_user()
     return redirect(url_for('index'))
 
-@app.route('/register')
+@app.route('/register', methods=['GET', 'POST'])
 def register():
     if current_user.is_authenticated:
         return redirect(url_for('index'))
@@ -55,3 +55,14 @@ def register():
         flash('You have successfully registered.')
         return redirect(url_for('login'))
     return render_template('register.html', title='Register', form=form)
+
+@app.route('/addCard', methods=['GET', 'POST'])
+def addCard():
+    form = AddCard()
+    if form.validate_on_submit():
+        card = Card(word=form.word.data, translation=form.translation.data)
+        db.session.add(card)
+        db.session.commit()
+        flash('You have successfully added ' + form.word.data + ' to your deck!')
+        return redirect(url_for('index'))
+    return render_template('addCard.html', title='Add New Card', form=form)

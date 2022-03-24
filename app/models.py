@@ -21,3 +21,12 @@ class User(UserMixin, db.Model):
 
     def check_password(self, password):
         return check_password_hash(self.password_hash, password)
+
+class Card(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    word = db.Column(db.String(64), index=True, unique=True)
+    translation = db.Column(db.String(1000), index=True)
+
+    def __repr__(self):
+        return '<Card {}>'.format(self.word)
+    
