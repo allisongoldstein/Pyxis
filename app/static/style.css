@@ -1,0 +1,20 @@
+html, body {
+    background-color: rgb(218, 235, 221);
+    margin: 0px;
+    padding: 0px;
+}
+
+a {
+    color: black;
+}
+
+.nav {
+    background-color: white;
+    padding: 10px;
+}
+
+.right {
+    display: inline-block;
+    position: fixed;
+    right: 10px;
+}
