@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="int">
+    <table>
+        <thead>
+            <th>Word</th>
+            <th>Translation</th>
+        </thead>
+        {% for card in cards %}
+        <tbody>
+            <td>{{ card.word }}</td>
+            <td>{{ card.translation }}</td>
+        </tbody>
+        {% endfor %}
+    </table>
+</div>
+{% endblock %}

@@ -56,6 +56,13 @@ def register():
         return redirect(url_for('login'))
     return render_template('register.html', title='Register', form=form)
 
+@app.route('/viewCards')
+@login_required
+def viewCards():
+    cards = Card.query.all()
+    print(cards)
+    return render_template('viewCards.html', title='View Cards', cards=cards)
+
 @app.route('/addCard', methods=['GET', 'POST'])
 @login_required
 def addCard():
@@ -72,4 +79,4 @@ def addCard():
 @login_required
 def map():
     vis = '100%'
-    return render_template('map.html', vis=vis)
+    return render_template('map.html', title='Map', vis=vis)
