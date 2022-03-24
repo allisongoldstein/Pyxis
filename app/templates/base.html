@@ -3,8 +3,6 @@
 <html>
     <head>
         <title>Language Map - {{ title }}</title>
-    </head>
-    <body>
         <div>
             <div class="nav">
             Language Map: 
@@ -14,13 +12,18 @@
                 <a href="/login">Login</a>
             </div>
             {% else %}
+            <a href="/map">Map</a>
             <a href="/cards.html">View Cards</a>
             <a href="/addCard">Add Card</a>
+
             <div class="right">
                 <a href="/logout">Logout</a>
             </div>
             {% endif %}
             </div>
+        </div>
+        </head>
+        <body>
             {% with messages = get_flashed_messages() %}
             {% if messages %}
             <ul>
@@ -33,6 +36,5 @@
             <div class="content">
             {% block content %}{% endblock %}
             </div>
-        </div>
     </body>
 </html>

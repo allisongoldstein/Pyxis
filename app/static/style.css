@@ -4,6 +4,10 @@ html, body {
     padding: 0px;
 }
 
+.content {
+    margin: 20px;
+}
+
 a {
     color: black;
 }
@@ -17,4 +21,8 @@ a {
     display: inline-block;
     position: fixed;
     right: 10px;
+}
+
+img {
+    width: 100%;
 }

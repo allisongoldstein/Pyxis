@@ -57,6 +57,7 @@ def register():
     return render_template('register.html', title='Register', form=form)
 
 @app.route('/addCard', methods=['GET', 'POST'])
+@login_required
 def addCard():
     form = AddCard()
     if form.validate_on_submit():
@@ -66,3 +67,8 @@ def addCard():
         flash('You have successfully added ' + form.word.data + ' to your deck!')
         return redirect(url_for('index'))
     return render_template('addCard.html', title='Add New Card', form=form)
+
+@app.route('/map')
+@login_required
+def map():
+    return render_template('map.html')
