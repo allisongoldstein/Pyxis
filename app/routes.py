@@ -71,4 +71,5 @@ def addCard():
 @app.route('/map')
 @login_required
 def map():
-    return render_template('map.html')
+    vis = '100%'
+    return render_template('map.html', vis=vis)

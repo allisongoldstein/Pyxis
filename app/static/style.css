@@ -1,10 +1,14 @@
 html, body {
-    background-color: rgb(218, 235, 221);
+    background-color: white;
     margin: 0px;
     padding: 0px;
 }
 
 .content {
+    margin: 0px;
+}
+
+.int {
     margin: 20px;
 }
 
@@ -23,6 +27,13 @@ a {
     right: 10px;
 }
 
+.map {
+    margin: 0px;
+    padding: 0px;
+    position: relative;
+}
+
 img {
+    padding-top: 15px;
     width: 100%;
 }
