@@ -184,7 +184,7 @@ def parseContent(content):
             if word:
                 wl.append(word)
         wordList.extend(wl)
-    return wordCheck(wordList)
+    return wordCheck(set(wordList))
 
 def wordCheck(words):
     for word in words:
