@@ -52,12 +52,25 @@ table {
     border: 2px solid black;
     text-align: center;
     border-collapse: collapse;
+    /* background-color: orange; */
+}
+
+thead {
+    background-color: white;
 }
 
 th, td {
     border: 2px solid black;
     padding-left: 10px;
     padding-right: 10px;
+}
+
+tbody {
+    background-color: rgb(240, 240, 240);
+}
+
+tr:nth-child(even) {
+    background-color: rgb(252, 252, 252);
 }
 
 .btnimg {

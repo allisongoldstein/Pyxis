@@ -9,8 +9,9 @@
             <th>Edit</th>
             <th>Delete</th>
         </thead>
-        {% for card in cards %}
         <tbody>
+        {% for card in cards %}
+        <tr>
             <td>{{ card.word }}</td>
             <td>{{ card.translation }}</td>
             <td>
@@ -23,8 +24,9 @@
                     <input type="image" class="btnimg" src="../static/images/delete.png">
                 </form>
             </td>
-        </tbody>
+        </tr>
         {% endfor %}
+        </tbody>
     </table>
 </div>
 {% endblock %}

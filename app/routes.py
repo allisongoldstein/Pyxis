@@ -152,7 +152,7 @@ def wordCheck(words):
     for word in words:
         w = Card.query.filter_by(word=word).first()
         if w is None:
-            card = Card(word=word)
+            card = Card(word=word, translation="")
             db.session.add(card)
             db.session.commit()
 
