@@ -18,6 +18,9 @@ a {
 
 .nav {
     background-color: white;
+    display: inline-block;
+    position: relative;
+    width: 100%;
     padding: 7px;
     padding-top: 14px;
     padding-bottom: 14px;
@@ -30,9 +33,8 @@ a {
 }
 
 .right {
-    display: inline-block;
-    position: fixed;
-    right: 10px;
+    float: right;
+    margin-right: 20px;
 }
 
 .map {
@@ -77,4 +79,8 @@ tr:nth-child(even) {
     position: relative;
     margin-top: 10%;
     margin-left: auto;
+}
+
+.left {
+    text-align: left;
 }
