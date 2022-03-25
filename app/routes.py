@@ -10,6 +10,7 @@ from werkzeug.urls import url_parse
 from app.models import Card, User
 from app import db
 from app.forms import RegistrationForm, AddCard
+from sqlalchemy import delete
 
 @app.route('/')
 @app.route('/index')
@@ -60,7 +61,7 @@ def register():
 @login_required
 def viewCards():
     cards = Card.query.all()
-    print(cards)
+    # print(cards)
     return render_template('viewCards.html', title='View Cards', cards=cards)
 
 @app.route('/addCard', methods=['GET', 'POST'])
@@ -74,6 +75,15 @@ def addCard():
         flash('You have successfully added ' + form.word.data + ' to your deck!')
         return redirect(url_for('index'))
     return render_template('addCard.html', title='Add New Card', form=form)
+
+@app.route('/<cardID>/deleteCard', methods=["POST"])
+@login_required
+def deleteCard(cardID):
+    print(cardID)
+    card = Card.query.filter_by(id=cardID).first()
+    db.session.delete(card)
+    db.session.commit()
+    return redirect(url_for('viewCards'))
 
 @app.route('/map')
 @login_required

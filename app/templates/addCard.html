@@ -15,9 +15,6 @@
         <p>
             {{ form.translation.label }}<br>
             {{ form.translation(size=32) }}<br>
-            {% for error in form.word.errors %}
-            <span style="color: red;">[{{ error }}]</span>
-            {% endfor %}
         </p>
         <p>{{ form.submit() }}</p>
     </form>

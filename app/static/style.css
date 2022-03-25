@@ -34,7 +34,7 @@ a {
     position: relative;
 }
 
-img {
+.mapimg {
     padding-top: 15px;
     width: 100%;
 }
@@ -51,4 +51,10 @@ th, td {
     border: 2px solid black;
     padding-left: 10px;
     padding-right: 10px;
+}
+
+.btnimg {
+    position: relative;
+    margin-top: 10%;
+    margin-left: auto;
 }
