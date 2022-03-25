@@ -6,11 +6,15 @@
         <thead>
             <th>Word</th>
             <th>Translation</th>
+            <th>Edit</th>
+            <th>Delete</th>
         </thead>
         {% for card in cards %}
         <tbody>
             <td>{{ card.word }}</td>
             <td>{{ card.translation }}</td>
+            <td>Edit</td>
+            <td>Delete</td>
         </tbody>
         {% endfor %}
     </table>

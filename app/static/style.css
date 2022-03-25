@@ -38,3 +38,17 @@ img {
     padding-top: 15px;
     width: 100%;
 }
+
+table {
+    margin-left: auto;
+    margin-right: auto;
+    border: 2px solid black;
+    text-align: center;
+    border-collapse: collapse;
+}
+
+th, td {
+    border: 2px solid black;
+    padding-left: 10px;
+    padding-right: 10px;
+}
