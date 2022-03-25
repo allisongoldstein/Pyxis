@@ -9,7 +9,7 @@ from flask import request
 from werkzeug.urls import url_parse
 from app.models import Card, User
 from app import db
-from app.forms import RegistrationForm, AddCard
+from app.forms import RegistrationForm, AddCard, EditCard
 from sqlalchemy import delete
 
 @app.route('/')
@@ -61,7 +61,6 @@ def register():
 @login_required
 def viewCards():
     cards = Card.query.all()
-    # print(cards)
     return render_template('viewCards.html', title='View Cards', cards=cards)
 
 @app.route('/addCard', methods=['GET', 'POST'])
@@ -75,6 +74,18 @@ def addCard():
         flash('You have successfully added ' + form.word.data + ' to your deck!')
         return redirect(url_for('index'))
     return render_template('addCard.html', title='Add New Card', form=form)
+
+@app.route('/<cardID>/editCard', methods=['GET', 'POST'])
+@login_required
+def editCard(cardID):
+    card = Card.query.filter_by(id=cardID).first()
+    form = EditCard(obj=card)
+    if form.validate_on_submit():
+        card.translation = form.translation.data
+        db.session.commit()
+        cards = Card.query.all()
+        return redirect(url_for('viewCards'))
+    return render_template('editCard.html', title='Edit Card', form=form)
 
 @app.route('/<cardID>/deleteCard', methods=["POST"])
 @login_required
