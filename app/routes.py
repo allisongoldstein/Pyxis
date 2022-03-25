@@ -90,7 +90,6 @@ def ignores():
 @app.route('/<ignoreID>/deleteIgnore', methods=["POST"])
 @login_required
 def deleteIgnore(ignoreID):
-    print(ignoreID)
     ignore = Ignore.query.filter_by(id=ignoreID).first()
     db.session.delete(ignore)
     db.session.commit()
@@ -105,7 +104,6 @@ def variants():
 @app.route('/<variantID>/deleteVariant', methods=["POST"])
 @login_required
 def deleteVariant(variantID):
-    print(variantID)
     variant = Variant.query.filter_by(id=variantID).first()
     db.session.delete(variant)
     db.session.commit()
@@ -126,7 +124,6 @@ def editCard(cardID):
 @app.route('/<cardID>/deleteCard', methods=["POST"])
 @login_required
 def deleteCard(cardID):
-    print(cardID)
     card = Card.query.filter_by(id=cardID).first()
     db.session.delete(card)
     db.session.commit()
@@ -213,10 +210,11 @@ def filterNewWords(id):
             if req == 'add':
                 adds.append(word)
             elif req == 'ignore':
-                print(word)
                 igns.append(word)
             elif req == 'variant':
-                vars.append(word)
+                adtl = word + '-adtl'
+                standardForm = request.form[adtl]
+                vars.append((word, standardForm))
         addFromList(adds)
         ignoreFromList(igns)
         variantsFromList(vars)
@@ -240,7 +238,13 @@ def ignoreFromList(words):
 
 def variantsFromList(words):
     for word in words:
-        variant = Variant(word=word)
+        standard = word[1]
+        card = Card.query.filter_by(word=standard).first()
+        if not card:
+            card = Card(word=standard, translation="")
+            db.session.add(card)
+            db.session.commit()
+        variant = Variant(word=word[0], card_id=card.id)
         db.session.add(variant)
         db.session.commit()
     return

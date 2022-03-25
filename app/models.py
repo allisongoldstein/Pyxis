@@ -26,6 +26,7 @@ class Card(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     word = db.Column(db.String(64), index=True, unique=True)
     translation = db.Column(db.String(1000), index=True)
+    variants = db.relationship("Variant", backref='card', lazy=True)
 
     def __repr__(self):
         return '<Card {}>'.format(self.word)
@@ -51,6 +52,8 @@ class Ignore(db.Model):
 class Variant(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     word = db.Column(db.String(20), index=True)
+    card_id = db.Column(db.Integer, db.ForeignKey('card.id'))
+
 
 db.create_all()
 db.session.commit()

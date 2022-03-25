@@ -4,13 +4,15 @@
     <div class="int">
         <table>
             <thead>
-                <th>Word</th>
+                <th>Variant</th>
+                <th>Standard</th>
                 <th>Delete</th>
             </thead>
             <tbody>
             {% for variant in variants %}
             <tr>
                 <td>{{ variant.word }}</td>
+                <td>{{ variant.card.word }}</td>
                 <td>
                     <form action="{{ url_for('deleteVariant', variantID=variant.id) }}" method="POST">
                         <input type="image" class="btnimg" src="../static/images/delete.png">
