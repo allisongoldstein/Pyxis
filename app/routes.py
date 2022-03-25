@@ -58,6 +58,11 @@ def register():
         return redirect(url_for('login'))
     return render_template('register.html', title='Register', form=form)
 
+@app.route('/settings')
+@login_required
+def settings():
+    return render_template('settings.html', title='Settings')
+
 @app.route('/viewCards')
 @login_required
 def viewCards():
@@ -75,6 +80,36 @@ def addCard():
         flash('You have successfully added ' + form.word.data + ' to your deck!')
         return redirect(url_for('index'))
     return render_template('addCard.html', title='Add New Card', form=form)
+
+@app.route('/ignores', methods=['GET', 'POST'])
+@login_required
+def ignores():
+    ignores = Ignore.query.filter().order_by(Ignore.word)
+    return render_template('ignores.html', title='Manage Ignores', ignores=ignores)
+
+@app.route('/<ignoreID>/deleteIgnore', methods=["POST"])
+@login_required
+def deleteIgnore(ignoreID):
+    print(ignoreID)
+    ignore = Ignore.query.filter_by(id=ignoreID).first()
+    db.session.delete(ignore)
+    db.session.commit()
+    return redirect(url_for('ignores'))
+
+@app.route('/variants', methods=['GET', 'POST'])
+@login_required
+def variants():
+    variants = Variant.query.filter().order_by(Variant.word)
+    return render_template('variants.html', title='Manage Variants', variants=variants)
+
+@app.route('/<variantID>/deleteVariant', methods=["POST"])
+@login_required
+def deleteVariant(variantID):
+    print(variantID)
+    variant = Variant.query.filter_by(id=variantID).first()
+    db.session.delete(variant)
+    db.session.commit()
+    return redirect(url_for('variants'))
 
 @app.route('/<cardID>/editCard', methods=['GET', 'POST'])
 @login_required
