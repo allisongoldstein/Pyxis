@@ -117,7 +117,6 @@ def editCard(cardID):
     if form.validate_on_submit():
         card.translation = form.translation.data
         db.session.commit()
-        cards = Card.query.all()
         return redirect(url_for('viewCards'))
     return render_template('editCard.html', title='Edit Card', form=form)
 
@@ -207,14 +206,17 @@ def filterNewWords(id):
         vars = []
         for word in words:
             req = request.form[word]
+            adtl = word + '-adtl'
             if req == 'add':
-                adds.append(word)
+                translation = request.form[adtl]
+                adds.append((word, translation))
             elif req == 'ignore':
                 igns.append(word)
             elif req == 'variant':
-                adtl = word + '-adtl'
+                t = adtl + '-translation'
                 standardForm = request.form[adtl]
-                vars.append((word, standardForm))
+                translation = request.form[t]
+                vars.append((word, standardForm, translation))
         addFromList(adds)
         ignoreFromList(igns)
         variantsFromList(vars)
@@ -224,7 +226,7 @@ def filterNewWords(id):
 
 def addFromList(words):
     for word in words:
-        card = Card(word=word, translation="")
+        card = Card(word=word[0], translation=word[1])
         db.session.add(card)
         db.session.commit()
     return
@@ -239,9 +241,10 @@ def ignoreFromList(words):
 def variantsFromList(words):
     for word in words:
         standard = word[1]
+        translation = word[2]
         card = Card.query.filter_by(word=standard).first()
         if not card:
-            card = Card(word=standard, translation="")
+            card = Card(word=standard, translation=translation)
             db.session.add(card)
             db.session.commit()
         variant = Variant(word=word[0], card_id=card.id)
