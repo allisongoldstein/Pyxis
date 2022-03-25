@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="int">
+    <table>
+        <thead>
+            <th>Source</th>
+            <th>Content</th>
+            <th>Delete</th>
+        </thead>
+        <tbody>
+        {% for target in targets %}
+        <tr>
+            <td>{{ target.source }}</td>
+            <td class="left">{{ target.content }}</td>
+            <td>
+                <form action="{{ url_for('deleteTarget', targetID=target.id) }}" method="POST">
+                    <input type="image" class="btnimg" src="../static/images/delete.png">
+                </form>
+            </td>
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

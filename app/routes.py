@@ -251,3 +251,17 @@ def variantsFromList(words):
         db.session.add(variant)
         db.session.commit()
     return
+
+@app.route('/viewTargets')
+@login_required
+def viewTargets():
+    targets = Target.query.filter()
+    return render_template('viewTargets.html', title='View Targets', targets=targets)
+
+@app.route('/<targetID>/deleteTarget', methods=["POST"])
+@login_required
+def deleteTarget(targetID):
+    target = Target.query.filter_by(id=targetID).first()
+    db.session.delete(target)
+    db.session.commit()
+    return redirect(url_for('viewTargets'))
