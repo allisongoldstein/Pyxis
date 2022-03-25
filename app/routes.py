@@ -7,10 +7,11 @@ from flask_login import logout_user
 from flask_login import login_required
 from flask import request
 from werkzeug.urls import url_parse
-from app.models import Card, User
+from app.models import Card, User, Target
 from app import db
-from app.forms import RegistrationForm, AddCard, EditCard
+from app.forms import RegistrationForm, AddCard, EditCard, AddTarget
 from sqlalchemy import delete
+import re
 
 @app.route('/')
 @app.route('/index')
@@ -101,3 +102,43 @@ def deleteCard(cardID):
 def map():
     vis = '100%'
     return render_template('map.html', title='Map', vis=vis)
+
+@app.route('/addTarget', methods=['GET', 'POST'])
+@login_required
+def addTarget():
+    form = AddTarget()
+    if form.validate_on_submit():
+        target = Target(source=form.source.data, content=form.content.data, category=form.category.data, notes=form.notes.data)
+        db.session.add(target)
+        db.session.commit()
+        flash('You have successfully added ' + form.source.data + ' as a target.')
+        parseContent(form.content.data)
+        return redirect(url_for('addTarget'))
+    return render_template('addTarget.html', title='Add Target', form=form)
+
+def parseContent(content):
+    sentenceList = re.split(r"[.|!|\\?]", content)
+    for i in range(len(sentenceList)):
+        sentence = sentenceList[i]
+        if sentence == "":
+            del sentenceList[i]
+        else:
+            while sentence[0] == " ":
+                sentenceList[i] = sentence[1:]
+                sentence = sentenceList[i]
+
+    for sentence in sentenceList:
+        wordList = sentence.split(' ')
+        for i in range(len(wordList)):
+            word = wordList[i]
+            if word.isnumeric():
+                print(word)
+            elif not word.isalpha():
+                print(word)
+                while word and not word[0].isalpha():
+                    word = word[1:]
+                while word and not word[-1].isalpha():
+                    word = word[:-1]
+                print(word)
+                wordList[i] = word
+        print(wordList)

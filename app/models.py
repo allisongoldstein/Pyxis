@@ -30,3 +30,15 @@ class Card(db.Model):
     def __repr__(self):
         return '<Card {}>'.format(self.word)
     
+class Target(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    source = db.Column(db.String(100), index=True)
+    content = db.Column(db.String(1000), index=True)
+    category = db.Column(db.String(200), index=True)
+    notes = db.Column(db.String(400), index=True)    
+
+    def __repr__(self):
+        return '<Target {}>'.format(self.source)
+
+db.create_all()
+db.session.commit()
