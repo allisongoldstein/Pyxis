@@ -26,6 +26,7 @@ class Card(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     word = db.Column(db.String(64), index=True, unique=True)
     translation = db.Column(db.String(1000), index=True)
+    status = db.Column(db.String(64), index=True)
     variants = db.relationship("Variant", backref='card', lazy=True)
 
     def __repr__(self):
@@ -47,13 +48,9 @@ class Temp(db.Model):
 
 class Ignore(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    word = db.Column(db.String(20), index=True)
+    ignWord = db.Column(db.String(20), index=True)
 
 class Variant(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    word = db.Column(db.String(20), index=True)
-    card_id = db.Column(db.Integer, db.ForeignKey('card.id'))
-
-
-db.create_all()
-db.session.commit()
+    varWord = db.Column(db.String(20), index=True)
+    standardID = db.Column(db.Integer, db.ForeignKey('card.id'))

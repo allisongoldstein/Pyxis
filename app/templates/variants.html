@@ -11,7 +11,7 @@
             <tbody>
             {% for variant in variants %}
             <tr>
-                <td>{{ variant.word }}</td>
+                <td>{{ variant.varWord }}</td>
                 <td>{{ variant.card.word }}</td>
                 <td>
                     <form action="{{ url_for('deleteVariant', variantID=variant.id) }}" method="POST">

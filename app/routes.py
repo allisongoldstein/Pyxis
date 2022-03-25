@@ -15,7 +15,6 @@ import re
 
 @app.route('/')
 @app.route('/index')
-@login_required
 def index():
     return render_template('index.html', title='Home')
 
@@ -74,17 +73,16 @@ def viewCards():
 def addCard():
     form = AddCard()
     if form.validate_on_submit():
-        card = Card(word=form.word.data, translation=form.translation.data)
-        db.session.add(card)
-        db.session.commit()
+        list = [(form.word.data, form.translation.data)]
+        addFromList(list)
         flash('You have successfully added ' + form.word.data + ' to your deck!')
-        return redirect(url_for('index'))
+        return redirect(url_for('viewCards'))
     return render_template('addCard.html', title='Add New Card', form=form)
 
 @app.route('/ignores', methods=['GET', 'POST'])
 @login_required
 def ignores():
-    ignores = Ignore.query.filter().order_by(Ignore.word)
+    ignores = Ignore.query.filter().order_by(Ignore.ignWord)
     return render_template('ignores.html', title='Manage Ignores', ignores=ignores)
 
 @app.route('/<ignoreID>/deleteIgnore', methods=["POST"])
@@ -98,7 +96,7 @@ def deleteIgnore(ignoreID):
 @app.route('/variants', methods=['GET', 'POST'])
 @login_required
 def variants():
-    variants = Variant.query.filter().order_by(Variant.word)
+    variants = Variant.query.filter().order_by(Variant.varWord)
     return render_template('variants.html', title='Manage Variants', variants=variants)
 
 @app.route('/<variantID>/deleteVariant', methods=["POST"])
@@ -186,8 +184,8 @@ def wordCheck(words):
     newList = []
     for word in words:
         w = Card.query.filter_by(word=word).first()
-        i = Ignore.query.filter_by(word=word).first()
-        v = Variant.query.filter_by(word=word).first()
+        i = Ignore.query.filter_by(ignWord=word).first()
+        v = Variant.query.filter_by(varWord=word).first()
         if w or i or v:
             # words.remove(word)
             continue
@@ -226,14 +224,14 @@ def filterNewWords(id):
 
 def addFromList(words):
     for word in words:
-        card = Card(word=word[0], translation=word[1])
+        card = Card(word=word[0], translation=word[1], status='new')
         db.session.add(card)
         db.session.commit()
     return
 
 def ignoreFromList(words):
     for word in words:
-        ignore = Ignore(word=word)
+        ignore = Ignore(ignWord=word)
         db.session.add(ignore)
         db.session.commit()
     return
@@ -247,7 +245,7 @@ def variantsFromList(words):
             card = Card(word=standard, translation=translation)
             db.session.add(card)
             db.session.commit()
-        variant = Variant(word=word[0], card_id=card.id)
+        variant = Variant(varWord=word[0], standardID=card.id)
         db.session.add(variant)
         db.session.commit()
     return
