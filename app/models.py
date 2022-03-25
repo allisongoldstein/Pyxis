@@ -40,5 +40,17 @@ class Target(db.Model):
     def __repr__(self):
         return '<Target {}>'.format(self.source)
 
+class Temp(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    listString = db.Column(db.String(2000), index=True)
+
+class Ignore(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    word = db.Column(db.String(20), index=True)
+
+class Variant(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    word = db.Column(db.String(20), index=True)
+
 db.create_all()
 db.session.commit()

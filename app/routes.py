@@ -7,7 +7,7 @@ from flask_login import logout_user
 from flask_login import login_required
 from flask import request
 from werkzeug.urls import url_parse
-from app.models import Card, User, Target
+from app.models import Card, User, Target, Temp, Ignore, Variant
 from app import db
 from app.forms import RegistrationForm, AddCard, EditCard, AddTarget
 from sqlalchemy import delete
@@ -61,7 +61,7 @@ def register():
 @app.route('/viewCards')
 @login_required
 def viewCards():
-    cards = Card.query.all()
+    cards = Card.query.filter().order_by(Card.word)
     return render_template('viewCards.html', title='View Cards', cards=cards)
 
 @app.route('/addCard', methods=['GET', 'POST'])
@@ -111,11 +111,13 @@ def addTarget():
         target = Target(source=form.source.data, content=form.content.data, category=form.category.data, notes=form.notes.data)
         db.session.add(target)
         db.session.commit()
-        flash('You have successfully added ' + form.source.data + ' as a target.')
         wordList = parseContent(form.content.data)
         wordCheck(wordList)
-        print(wordList)
-        return redirect(url_for('viewCards'))
+        wl = " ".join(wordList)
+        temp = Temp(listString=wl)
+        db.session.add(temp)
+        db.session.commit()
+        return redirect(url_for('filterNewWords', id=temp.id))
     return render_template('addTarget.html', title='Add Target', form=form)
 
 def parseContent(content):
@@ -133,26 +135,72 @@ def parseContent(content):
     wordList = []
     for sentence in sentenceList:
         words = sentence.split(' ')
+        wl = []
         for i in range(len(words)):
             word = words[i].lower()
             if word.isnumeric():
-                print(word)
+                word = ""
             elif not word.isalpha():
-                print(word)
                 while word and not word[0].isalpha():
                     word = word[1:]
                 while word and not word[-1].isalpha():
                     word = word[:-1]
-                print(word)
                 words[i] = word.lower()
-        wordList.extend(words)
-    return wordList
+            if word:
+                wl.append(word)
+        wordList.extend(wl)
+    return wordCheck(wordList)
 
 def wordCheck(words):
     for word in words:
         w = Card.query.filter_by(word=word).first()
-        if w is None:
-            card = Card(word=word, translation="")
-            db.session.add(card)
-            db.session.commit()
+        i = Ignore.query.filter_by(word=word).first()
+        v = Variant.query.filter_by(word=word).first()
+        if w or i or v:
+            words.remove(word)
+    return words
 
+@app.route('/<id>/filterNewWords.html', methods=['GET', 'POST'])
+@login_required
+def filterNewWords(id):
+    wl = Temp.query.filter_by(id=id).first()
+    words = wl.listString.split(" ")
+    if request.method == 'POST':
+        adds = []
+        igns = []
+        vars = []
+        for word in words:
+            req = request.form[word]
+            if req == 'add':
+                adds.append(word)
+            elif req == 'ignore':
+                igns.append(word)
+            elif req == 'variant':
+                vars.append(word)
+        addFromList(adds)
+        ignoreFromList(igns)
+        variantsFromList(vars)
+        flash('Target words sorted.')
+        return redirect(url_for('viewCards'))
+    return render_template('filterNewWords.html', title='Filter New Words', words=words)
+
+def addFromList(words):
+    for word in words:
+        card = Card(word=word, translation="")
+        db.session.add(card)
+        db.session.commit()
+    return
+
+def ignoreFromList(words):
+    for word in words:
+        ignore = Ignore(word=word)
+        db.session.add(ignore)
+        db.session.commit()
+    return
+
+def variantsFromList(words):
+    for word in words:
+        variant = Variant(word=word)
+        db.session.add(variant)
+        db.session.commit()
+    return

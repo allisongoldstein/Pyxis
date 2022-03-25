@@ -2,6 +2,17 @@
 
 {% block content %}
     <div class="int">
-
+        <form action="" method="POST">
+            {% for word in words %}
+            <p>{{ word }}</p>
+            <div>
+            <input type="radio" id="add" name={{word}} value="add" checked><label for="add">Add</label>
+            <input type="radio" id="ignore" name={{word}} value="ignore"><label for="variant">Variant</label>
+            <input type="radio" id="variant" name={{word}} value="variant"><label for="ignore">Ignore</label>
+            </div>
+            {% endfor %}
+            <br>
+            <button type="submit">Submit</button>
+        </form>
     </div>
 {% endblock %}
