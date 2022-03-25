@@ -187,13 +187,17 @@ def parseContent(content):
     return wordCheck(set(wordList))
 
 def wordCheck(words):
+    newList = []
     for word in words:
         w = Card.query.filter_by(word=word).first()
         i = Ignore.query.filter_by(word=word).first()
         v = Variant.query.filter_by(word=word).first()
         if w or i or v:
-            words.remove(word)
-    return words
+            # words.remove(word)
+            continue
+        else:
+            newList.append(word)
+    return newList
 
 @app.route('/<id>/filterNewWords.html', methods=['GET', 'POST'])
 @login_required
@@ -209,6 +213,7 @@ def filterNewWords(id):
             if req == 'add':
                 adds.append(word)
             elif req == 'ignore':
+                print(word)
                 igns.append(word)
             elif req == 'variant':
                 vars.append(word)
