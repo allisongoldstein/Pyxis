@@ -112,11 +112,14 @@ def addTarget():
         db.session.add(target)
         db.session.commit()
         flash('You have successfully added ' + form.source.data + ' as a target.')
-        parseContent(form.content.data)
-        return redirect(url_for('addTarget'))
+        wordList = parseContent(form.content.data)
+        wordCheck(wordList)
+        print(wordList)
+        return redirect(url_for('viewCards'))
     return render_template('addTarget.html', title='Add Target', form=form)
 
 def parseContent(content):
+    content = content.lower()
     sentenceList = re.split(r"[.|!|\\?]", content)
     for i in range(len(sentenceList)):
         sentence = sentenceList[i]
@@ -127,10 +130,11 @@ def parseContent(content):
                 sentenceList[i] = sentence[1:]
                 sentence = sentenceList[i]
 
+    wordList = []
     for sentence in sentenceList:
-        wordList = sentence.split(' ')
-        for i in range(len(wordList)):
-            word = wordList[i]
+        words = sentence.split(' ')
+        for i in range(len(words)):
+            word = words[i].lower()
             if word.isnumeric():
                 print(word)
             elif not word.isalpha():
@@ -140,5 +144,15 @@ def parseContent(content):
                 while word and not word[-1].isalpha():
                     word = word[:-1]
                 print(word)
-                wordList[i] = word
-        print(wordList)
+                words[i] = word.lower()
+        wordList.extend(words)
+    return wordList
+
+def wordCheck(words):
+    for word in words:
+        w = Card.query.filter_by(word=word).first()
+        if w is None:
+            card = Card(word=word)
+            db.session.add(card)
+            db.session.commit()
+
