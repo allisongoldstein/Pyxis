@@ -1,8 +1,13 @@
 {% extends 'base.html' %}
 
 {% block content %}
+    <!-- <div class="int"> -->
     <div class="map">
         <img class="mapimg" src="../static/images/map2.jpg">
+        <div class="mapGrid">
+            <div class="grid-container">
+            </div>
+        </div>
         <div class="blur">
             <style>
                 .blur {
@@ -16,4 +21,25 @@
             </style>
         </div>
     </div>
+<!-- </div> -->
+
+<script>
+    function map() {
+        grid = document.querySelector('.grid-container')
+        for (var i=0; i<10; i++) {
+            for (var j=0; j<10; j++) {
+                if (i%2==0) {
+                    var sqnum = (i*10 + j + 1)
+                } else {
+                    var sqnum = (i*10 + (9-j) + 1)
+                }
+                grid.innerHTML += '<div class="grid-square"><div class="sq' + sqnum + '"><div>' + sqnum + '</div></div></div>'
+            }
+        }
+    }
+    map()
+    // function style
+    
+</script>
+
 {% endblock %}
