@@ -7,6 +7,8 @@
             <th>Word</th>
             <th>Translation</th>
             <th>Status</th>
+            <th>Date</th>
+            <th>Interval</th>
             <th>Edit</th>
             <th>Delete</th>
         </thead>
@@ -16,6 +18,8 @@
             <td>{{ card.word }}</td>
             <td>{{ card.translation }}</td>
             <td>{{ card.status }}</td>
+            <td>{{ card.nextReviewDate }}</td>
+            <td>{{ card.lastInterval }}</td>
             <td>
                 <form action="{{ url_for('editCard', cardID=card.id )}}" method="POST">
                     <input type="image" class="btnimg" src="../static/images/edit.png">

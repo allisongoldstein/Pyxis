@@ -27,6 +27,8 @@ class Card(db.Model):
     word = db.Column(db.String(64), index=True, unique=True)
     translation = db.Column(db.String(1000), index=True)
     status = db.Column(db.String(64), index=True)
+    nextReviewDate = db.Column(db.Date, index=True)
+    lastInterval = db.Column(db.Integer)
     variants = db.relationship("Variant", backref='card', lazy=True)
 
     def __repr__(self):
@@ -37,7 +39,8 @@ class Target(db.Model):
     source = db.Column(db.String(100), index=True)
     content = db.Column(db.String(1000), index=True)
     category = db.Column(db.String(200), index=True)
-    notes = db.Column(db.String(400), index=True)    
+    notes = db.Column(db.String(400), index=True)
+    uniqueWordCount = db.Column(db.Integer)
 
     def __repr__(self):
         return '<Target {}>'.format(self.source)
@@ -54,3 +57,6 @@ class Variant(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     varWord = db.Column(db.String(20), index=True)
     standardID = db.Column(db.Integer, db.ForeignKey('card.id'))
+
+db.create_all()
+db.session.commit()

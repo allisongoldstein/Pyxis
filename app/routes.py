@@ -1,3 +1,4 @@
+from os import curdir
 from urllib.parse import urlparse
 from flask import render_template, flash, redirect, url_for
 from app import app
@@ -10,7 +11,8 @@ from werkzeug.urls import url_parse
 from app.models import Card, User, Target, Temp, Ignore, Variant
 from app import db
 from app.forms import RegistrationForm, AddCard, EditCard, AddTarget
-from sqlalchemy import delete
+from sqlalchemy import delete, cast
+from datetime import datetime, date
 import re
 
 @app.route('/')
@@ -73,7 +75,7 @@ def viewCards():
 def addCard():
     form = AddCard()
     if form.validate_on_submit():
-        list = [(form.word.data, form.translation.data)]
+        list = [(form.word.data.lower(), form.translation.data)]
         addFromList(list)
         flash('You have successfully added ' + form.word.data + ' to your deck!')
         return redirect(url_for('viewCards'))
@@ -137,11 +139,13 @@ def map():
 def addTarget():
     form = AddTarget()
     if form.validate_on_submit():
-        target = Target(source=form.source.data, content=form.content.data, category=form.category.data, notes=form.notes.data)
+        wordList = parseContent(form.content.data)
+        tLength = len(wordList)
+        print(tLength)
+        wordList = wordCheck(wordList)
+        target = Target(source=form.source.data, content=form.content.data, category=form.category.data, notes=form.notes.data, uniqueWordCount=tLength)
         db.session.add(target)
         db.session.commit()
-        wordList = parseContent(form.content.data)
-        wordCheck(wordList)
         wl = " ".join(wordList)
         temp = Temp(listString=wl)
         db.session.add(temp)
@@ -178,7 +182,7 @@ def parseContent(content):
             if word:
                 wl.append(word)
         wordList.extend(wl)
-    return wordCheck(set(wordList))
+    return set(wordList)
 
 def wordCheck(words):
     newList = []
@@ -224,7 +228,8 @@ def filterNewWords(id):
 
 def addFromList(words):
     for word in words:
-        card = Card(word=word[0], translation=word[1], status='new')
+        dueDate = date.today()
+        card = Card(word=word[0], translation=word[1], status='new', nextReviewDate=dueDate, lastInterval=0)
         db.session.add(card)
         db.session.commit()
     return
@@ -242,9 +247,8 @@ def variantsFromList(words):
         translation = word[2]
         card = Card.query.filter_by(word=standard).first()
         if not card:
-            card = Card(word=standard, translation=translation)
-            db.session.add(card)
-            db.session.commit()
+            add = [[standard, translation]]
+            addFromList(add)
         variant = Variant(varWord=word[0], standardID=card.id)
         db.session.add(variant)
         db.session.commit()
@@ -263,3 +267,19 @@ def deleteTarget(targetID):
     db.session.delete(target)
     db.session.commit()
     return redirect(url_for('viewTargets'))
+
+@app.route('/learn')
+@login_required
+def learn():
+    getFlashcards()
+    return render_template('learn.html', title='Learn')
+
+def getFlashcards():
+    curDate = date.today()
+    flashcards = db.session.query(Card).filter(Card.nextReviewDate>=curDate).all()
+    if flashcards:
+        for each in flashcards:
+            print(each.word, each.nextReviewDate==curDate)
+    else:
+        print('no words due')
+    return
