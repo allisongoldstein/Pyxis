@@ -41,6 +41,7 @@ a {
     margin: 0px;
     padding: 0px;
     position: relative;
+    /* background-image: url('./images/map2.jpg'); */
 }
 
 .mapimg {
@@ -54,7 +55,6 @@ table {
     border: 2px solid black;
     text-align: center;
     border-collapse: collapse;
-    /* background-color: orange; */
 }
 
 thead {
@@ -83,4 +83,29 @@ tr:nth-child(even) {
 
 .left {
     text-align: left;
+}
+
+.flashcard {
+    margin: auto;
+    background-color: white;
+    border: 2px solid black;
+    width: 300px;
+    height: 200px;
+}
+
+.entireCard {
+    text-align: center;
+    
+}
+
+.cardText {
+    margin-top: 40px;
+    margin-left: auto;
+    text-align: center;
+    font-weight: bold;
+    font-size: 24pt;
+}
+
+#hideElement {
+    display: None;
 }

@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="int">
+    <h1>Flashcards</h1>
+    {% if not flashcards %}
+        <p>No cards to review!</p>
+    {% else %}
+    <div class="flashcard">
+        <div class="entireCard">
+        <div class="cardText">{{ flashcards[0].word }}</div><br>
+
+        <text class="swap" id="hideElement">{{ flashcards[0].translation }}</text>
+        <br><br>
+        <div class="cardButtons">
+        <button class="swap" id="showElement" onclick="swap()">Show translation</button>
+        <button class="swap" id="hideElement" onclick="swap()">Hide translation</button>
+        <hr style="height: 4px; margin: 0px; padding: 0px; visibility: hidden" />
+        <button class="swap" id="hideElement">Repeat</button>
+        <button class="swap" id="hideElement">Know</button>
+        </div>
+        </div>
+    </div>
+    {% endif %}
+</div>
+
+<script>
+    function swap() {
+        change = document.getElementsByClassName('swap')
+        for (var i=0; i<change.length; i++) {
+            if (change[i].id == "showElement") {
+                change[i].id = "hideElement"
+            } else if (change[i].id == "hideElement") {
+                change[i].id = "showElement"
+            }
+        }
+    }
+</script>
+
+{% endblock %}
+

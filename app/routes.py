@@ -269,14 +269,19 @@ def deleteTarget(targetID):
 @app.route('/learn')
 @login_required
 def learn():
-    flashcards = getFlashcards()
-    if not flashcards:
-        print('no words due')
-        return render_template('learn.html', title='Learn')
-    print(flashcards)
     return render_template('learn.html', title='Learn')
+
+@app.route('/flashcards')
+@login_required
+def flashcards():
+    flashcards = getFlashcards()
+    # if not flashcards:
+    #     print('no words due')
+    #     return render_template('flashcards.html', title='Flashcards')
+    print(flashcards)
+    return render_template('flashcards.html', title='Flashcards', flashcards=flashcards)
 
 def getFlashcards():
     curDate = date.today()
-    flashcards = db.session.query(Card).filter(Card.nextReviewDate>=curDate).all()
+    flashcards = db.session.query(Card).filter(Card.nextReviewDate<=curDate).all()
     return flashcards
