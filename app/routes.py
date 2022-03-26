@@ -158,9 +158,7 @@ def parseContent(content):
     sentenceList = re.split(r"[.|!|\\?]", content)
     for i in range(len(sentenceList)):
         sentence = sentenceList[i]
-        if sentence == "":
-            del sentenceList[i]
-        else:
+        if sentence:
             while sentence[0] == " ":
                 sentenceList[i] = sentence[1:]
                 sentence = sentenceList[i]
@@ -271,15 +269,14 @@ def deleteTarget(targetID):
 @app.route('/learn')
 @login_required
 def learn():
-    getFlashcards()
+    flashcards = getFlashcards()
+    if not flashcards:
+        print('no words due')
+        return render_template('learn.html', title='Learn')
+    print(flashcards)
     return render_template('learn.html', title='Learn')
 
 def getFlashcards():
     curDate = date.today()
     flashcards = db.session.query(Card).filter(Card.nextReviewDate>=curDate).all()
-    if flashcards:
-        for each in flashcards:
-            print(each.word, each.nextReviewDate==curDate)
-    else:
-        print('no words due')
-    return
+    return flashcards
