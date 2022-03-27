@@ -6,22 +6,21 @@
         <div class="mapGrid">
             <div class="grid-container">
                 <script>
-                    var color = 'yellow'
                     for (var i=100; i>{{percent}}; i--) {
                         if (i%7==0) {
-                            color = 'indigo' //'green'
+                            color = 'rgb(137, 108, 202)'
                         } else if (i%7==1) {
-                            color = 'red' //'rgb(160, 82, 160)'
+                            color = 'rgb(160, 82, 160)'
                         } else if (i%7==2) {
-                            color = 'orange' //'rgb(26, 190, 155)'
+                            color = 'rgb(38, 98, 187)'
                         } else if (i%7==3) {
-                            color = 'yellow' //'rgb(62, 104, 196)'
+                            color = 'rgb(26, 190, 155)'
                         } else if (i%7==4) {
-                            color = 'green' //'rgb(33, 154, 175)'
+                            color ='rgb(62, 104, 196)'
                         } else if (i%7==5) {
-                            color = 'blue' //'rgb(127, 80, 255)'
-                        } else if (i%7==6) {
-                            color = 'purple' //'rgb(38, 98, 187)'
+                            color = 'rgb(33, 154, 175)'
+                        } else {
+                            color = 'rgb(127, 80, 255)'
                         }
                         var sqCSS = '.sq' + i + ' { background-color:' + color + '; color: black; border: 1px solid black; }'
                         var style = document.createElement('style')
@@ -31,21 +30,31 @@
                 </script>
             </div>
         </div>
+        <div class="percent">{{ percent }}% COMPLETE</div>
     </div>
 
 <script>
     function map() {
-        grid = document.querySelector('.grid-container')
-        for (var i=0; i<10; i++) {
-            for (var j=0; j<10; j++) {
-                if (i%2==0) {
-                    var sqnum = (i*10 + j + 1)
-                } else {
-                    var sqnum = (i*10 + (9-j) + 1)
-                }
-                grid.innerHTML += '<div class="grid-square"><div class="sq' + sqnum + '"><div>' + sqnum + '</div></div></div>'
-            }
+        var grid = document.querySelector('.grid-container')
+        const mapArr = 
+       [78, 77, 76, 75, 74, 73, 72, 71, 70, 69,
+        79, 60, 61, 62, 63, 64, 65, 66, 67, 68,
+        80, 59, 20, 19, 18, 17, 16, 15, 38, 39,
+        81, 58, 21,  6,  7,  8,  9, 14, 37, 40,
+        82, 57, 22,  5,  4,  1, 10, 13, 36, 41,
+        83, 56, 23, 24,  3,  2, 11, 12, 35, 42,
+        84, 55, 26, 25, 30, 31, 32, 33, 34, 43,
+        85, 54, 27, 28, 29, 48, 47, 46, 45, 44,
+        86, 53, 52, 51, 50, 49, 94, 95, 98, 99,
+        87, 88, 89, 90, 91, 92, 93, 96, 97,100]
+        for (var i=0; i<100; i++) {
+            sqNum = mapArr[i]
+            grid.innerHTML += '<div class="grid-square"><div class="sq' + sqNum + '">' + sqNum + '</div></div>'
         }
+
+        var center = document.getElementsByClassName("sq8")[0]
+        center.innerHTML = 'test'
+        
     }
     map()
 </script>
