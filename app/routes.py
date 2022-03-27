@@ -131,7 +131,7 @@ def deleteCard(cardID):
 @app.route('/map')
 @login_required
 def map():
-    percent = 24
+    percent = 18
     return render_template('map.html', title='Map', percent=percent)
 
 @app.route('/addTarget', methods=['GET', 'POST'])
@@ -247,6 +247,7 @@ def variantsFromList(words):
         if not card:
             add = [[standard, translation]]
             addFromList(add)
+            card = Card.query.filter_by(word=standard).first()
         variant = Variant(varWord=word[0], standardID=card.id)
         db.session.add(variant)
         db.session.commit()

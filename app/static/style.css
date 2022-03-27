@@ -139,7 +139,7 @@ tr:nth-child(even) {
     border: 1px solid black;
     width: 125px;
     height: 61px;
-    opacity: 94%;
+    opacity: 96%;
     background-color: transparent;
     border-color: transparent;
     color: transparent;
@@ -164,4 +164,5 @@ tr:nth-child(even) {
     font-weight: bolder;
     font-size: 26;
     text-align: center;
+    border: 1px dotted black
 }
