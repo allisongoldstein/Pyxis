@@ -1,27 +1,37 @@
 {% extends 'base.html' %}
 
 {% block content %}
-    <!-- <div class="int"> -->
     <div class="map">
         <img class="mapimg" src="../static/images/map2.jpg">
         <div class="mapGrid">
             <div class="grid-container">
+                <script>
+                    var color = 'yellow'
+                    for (var i=100; i>{{percent}}; i--) {
+                        if (i%7==0) {
+                            color = 'indigo' //'green'
+                        } else if (i%7==1) {
+                            color = 'red' //'rgb(160, 82, 160)'
+                        } else if (i%7==2) {
+                            color = 'orange' //'rgb(26, 190, 155)'
+                        } else if (i%7==3) {
+                            color = 'yellow' //'rgb(62, 104, 196)'
+                        } else if (i%7==4) {
+                            color = 'green' //'rgb(33, 154, 175)'
+                        } else if (i%7==5) {
+                            color = 'blue' //'rgb(127, 80, 255)'
+                        } else if (i%7==6) {
+                            color = 'purple' //'rgb(38, 98, 187)'
+                        }
+                        var sqCSS = '.sq' + i + ' { background-color:' + color + '; color: black; border: 1px solid black; }'
+                        var style = document.createElement('style')
+                        style.appendChild(document.createTextNode(sqCSS))
+                        document.head.appendChild(style) 
+                    }
+                </script>
             </div>
         </div>
-        <div class="blur">
-            <style>
-                .blur {
-                    width: 100%;
-                    height: 100%;
-                    position: absolute;
-                    bottom: 0px;
-                    top: 0px;
-                    /* background: radial-gradient(circle at center, rgba(255, 255, 255, 0) 0,rgb(255, 255, 255) {{vis}}); */
-                }
-            </style>
-        </div>
     </div>
-<!-- </div> -->
 
 <script>
     function map() {
@@ -38,8 +48,6 @@
         }
     }
     map()
-    // function style
-    
 </script>
 
 {% endblock %}

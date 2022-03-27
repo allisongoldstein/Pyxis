@@ -131,8 +131,8 @@ def deleteCard(cardID):
 @app.route('/map')
 @login_required
 def map():
-    vis = '100%'
-    return render_template('map.html', title='Map', vis=vis)
+    percent = 15
+    return render_template('map.html', title='Map', percent=percent)
 
 @app.route('/addTarget', methods=['GET', 'POST'])
 @login_required
