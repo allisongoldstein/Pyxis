@@ -10,9 +10,9 @@ from flask import request
 from werkzeug.urls import url_parse
 from app.models import Card, User, Target, Temp, Ignore, Variant
 from app import db
-from app.forms import RegistrationForm, AddCard, EditCard, AddTarget
+from app.forms import RegistrationForm, AddCard, EditCard, AddTarget, RepeatCard, CompleteCard
 from sqlalchemy import delete, cast
-from datetime import datetime, date
+from datetime import datetime, date, timedelta
 import re
 
 @app.route('/')
@@ -131,7 +131,7 @@ def deleteCard(cardID):
 @app.route('/map')
 @login_required
 def map():
-    percent = 18
+    percent = 36
     return render_template('map.html', title='Map', percent=percent)
 
 @app.route('/addTarget', methods=['GET', 'POST'])
@@ -141,7 +141,6 @@ def addTarget():
     if form.validate_on_submit():
         wordList = parseContent(form.content.data)
         tLength = len(wordList)
-        print(tLength)
         wordList = wordCheck(wordList)
         target = Target(source=form.source.data, content=form.content.data, category=form.category.data, notes=form.notes.data, uniqueWordCount=tLength)
         db.session.add(target)
@@ -189,7 +188,7 @@ def wordCheck(words):
         i = Ignore.query.filter_by(ignWord=word).first()
         v = Variant.query.filter_by(varWord=word).first()
         if w or i or v:
-            # words.remove(word)
+            # add M:M count based on status
             continue
         else:
             newList.append(word)
@@ -272,17 +271,48 @@ def deleteTarget(targetID):
 def learn():
     return render_template('learn.html', title='Learn')
 
-@app.route('/flashcards')
+@app.route('/flashcards', methods=['GET', 'POST'])
 @login_required
 def flashcards():
     flashcards = getFlashcards()
-    # if not flashcards:
-    #     print('no words due')
-    #     return render_template('flashcards.html', title='Flashcards')
-    print(flashcards)
-    return render_template('flashcards.html', title='Flashcards', flashcards=flashcards)
+    repeatForm = RepeatCard()
+    completeForm = CompleteCard()
+    if not flashcards:
+        flash('You have reviewed all due cards!')
+        return render_template('learn.html', title='Learn')
+    if request.method == 'POST':
+        form = request.form["submit"]
+        if form == 'Complete':
+            card = flashcards[0]
+            if card.status == 'new' or card.status == 'repeat':
+                card.status = 'learning'
+            if card.lastInterval == 0 or card.lastInterval == 1:
+                card.lastInterval += 1
+            else:
+                card.lastInterval = round(card.lastInterval * 1.5)
+            card.nextReviewDate = date.today() + timedelta(days=card.lastInterval)
+            if card.lastInterval > 60:
+                card.status = 'familiar'
+            elif card.lastInterval > 120:
+                card.status = 'expert'
+            db.session.commit()
+            flashcards = getFlashcards()
+        elif form == 'Repeat':
+            card = flashcards[0]
+            card.status = 'repeat'
+            card.lastInterval = 0
+            db.session.commit()
+            flashcards = getFlashcards()
+    return render_template('flashcards.html', title='Flashcards', flashcards=flashcards, repeatForm=repeatForm, completeForm=completeForm)
 
 def getFlashcards():
     curDate = date.today()
-    flashcards = db.session.query(Card).filter(Card.nextReviewDate<=curDate).all()
+    flashcards = db.session.query(Card).filter(Card.nextReviewDate<=curDate, Card.status!='repeat').all()
+    if not flashcards:
+        flashcards = getReviewCards()
     return flashcards
+
+def getReviewCards():
+    reviewCards = db.session.query(Card).filter(Card.status=='repeat').all()
+    reviewCards = db.session.query(Card).filter(Card.lastInterval==2).all()
+    return reviewCards

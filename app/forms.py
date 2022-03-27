@@ -51,3 +51,11 @@ class AddTarget(FlaskForm):
     category = StringField('Category')
     notes = TextAreaField('Notes')
     submit = SubmitField('Add')
+
+class RepeatCard(FlaskForm):
+    formValue = 'repeat'
+    submit = SubmitField('Repeat')
+
+class CompleteCard(FlaskForm):
+    formValue = 'complete'
+    submit = SubmitField('Complete')

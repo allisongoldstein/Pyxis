@@ -4,7 +4,7 @@
 <div class="int">
     <h1>Flashcards</h1>
     {% if not flashcards %}
-        <p>No cards to review!</p>
+        <p>No more cards to review today!</p>
     {% else %}
     <div class="flashcard">
         <div class="entireCard">
@@ -16,8 +16,16 @@
         <button class="swap" id="showElement" onclick="swap()">Show translation</button>
         <button class="swap" id="hideElement" onclick="swap()">Hide translation</button>
         <hr style="height: 4px; margin: 0px; padding: 0px; visibility: hidden" />
-        <button class="swap" id="hideElement">Repeat</button>
-        <button class="swap" id="hideElement">Know</button>
+        <div class="cardOptions">
+        <form class="ilb" action="" method="POST">
+            {{ repeatForm.hidden_tag() }}
+            <span class="swap" id="hideElement">{{ repeatForm.submit() }}</span>
+        </form>
+        <form class="ilb" action="" method="POST">
+            {{ completeForm.hidden_tag() }}
+            <span class="swap" id="hideElement">{{ completeForm.submit() }}</span>
+        </form>
+        </div>
         </div>
         </div>
     </div>

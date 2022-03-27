@@ -166,3 +166,11 @@ tr:nth-child(even) {
     text-align: center;
     border: 1px dotted black
 }
+
+.cardOptions {
+    display: inline-block;
+}
+
+.ilb {
+    display: inline-block;
+}
