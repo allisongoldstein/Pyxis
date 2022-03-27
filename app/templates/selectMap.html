@@ -2,12 +2,12 @@
 
 {% block content %}
 <div class="int">
-    <h1>Choose a Map</h1>
+    <h1 class="cent">Choose a Map</h1>
     <table>
         <thead>
             <th>Name</th>
             <th>% Remaining</th>
-            <th>Notes</th>
+            <!-- <th>Notes</th> -->
             <th>Go</th>
         </thead>
         <tbody>
@@ -15,10 +15,10 @@
             <tr>
                 <td>{{ map[0].source }}</td>
                 <td>{{ map[2] }}</td>
-                <td>{{ map[0].notes }}</td>
+                <!-- <td>{{ map[0].notes }}</td> -->
                 <td>
                     <form action="{{ url_for('map', targetID=map[0].id) }}">
-                        <input type="image" class="btnimg" src="../static/images/delete.png">
+                        <input type="image" class="btnimg" src="../static/images/go.jpg">
                     </form>
                 </td>
             </tr>

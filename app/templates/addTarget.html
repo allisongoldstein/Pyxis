@@ -2,32 +2,30 @@
 
 {% block content %}
     <div class="int">
-        <h1>Add Target</h1>
+        <div class="cent">
+        <h1>Add Target Material</h1>
         <form action="" method="POST">
             {{ form.hidden_tag() }}
             <p>
                 {{ form.source.label }}<br>
-                {{ form.source(size=32) }}<br>
+                {{ form.source(size=40) }}<br>
                 {% for error in form.source.errors %}
                 <span style="color: red;">[{{ error }}]</span>
                 {% endfor %}
             </p>
             <p>
                 {{ form.content.label }}<br>
-                {{ form.content(size=32) }}<br>
+                {{ form.content(cols="32", rows="20") }}<br>
                 {% for error in form.content.errors %}
                 <span style="color: red;">[{{ error }}]</span>
                 {% endfor %}
             </p>
             <p>
-                {{ form.category.label }}<br>
-                {{ form.category(size=32) }}<br>
-            </p>
-            <p>
                 {{ form.notes.label }}<br>
-                {{ form.notes(size=32) }}<br>
+                {{ form.notes(cols="32") }}<br>
             </p>
             <p> {{ form.submit() }}</p>
         </form>
+        </div>
     </div>
 {% endblock %}

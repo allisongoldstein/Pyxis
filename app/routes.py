@@ -331,10 +331,10 @@ def flashcards():
             else:
                 card.lastInterval = round(card.lastInterval * 1.5)
             card.nextReviewDate = date.today() + timedelta(days=card.lastInterval)
-            if card.lastInterval > 60:
-                card.status = 'familiar'
-            elif card.lastInterval > 120:
+            if card.lastInterval > 120:
                 card.status = 'expert'
+            elif card.lastInterval > 60:
+                card.status = 'familiar'
             db.session.commit()
             flashcards = getFlashcards()
         elif form == 'Repeat':
@@ -357,14 +357,14 @@ def getFlashcards():
 
 def getReviewCards():
     reviewCards = db.session.query(Card).filter(Card.status=='repeat').order_by(func.random()).all()
-    # reviewCards = db.session.query(Card).filter(Card.lastInterval==2).all()
+    # reviewCards = db.session.query(Card).filter(Card.lastInterval>2).all()
     return reviewCards
 
 @app.route('/viewStats')
 @login_required
 def viewStats():
     stats = getStats()
-    return render_template('viewStats.html', title='View Stats', stats=stats)
+    return render_template('viewStats.html', title='Stats', stats=stats)
 
 def getStats(target=None):
     stats = []
