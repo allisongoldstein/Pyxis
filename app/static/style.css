@@ -151,20 +151,33 @@ tr:nth-child(even) {
     height: 61px;
 }
 
-.percent {
-    width: 150px;
-    height: 20px;
+.info {
     position: fixed;
     top: 50%;
     left: 50%;
     margin-left: -75px;
-    margin-top: -10px;
     background-color: white;
-    opacity: 80%;
+    opacity: 90%;
     font-weight: bolder;
-    font-size: 26;
     text-align: center;
     border: 1px dotted black
+}
+
+#percent {
+    width: 150px;
+    margin-top: -20px;
+}
+
+#practiced {
+    width: 150px;
+    margin-top: 30px;
+}
+
+#title {
+    width: 300px;
+    margin-top: -270px;
+    margin-left: -150px;
+    font-size: 18pt;
 }
 
 .cardOptions {

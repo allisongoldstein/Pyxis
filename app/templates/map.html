@@ -6,28 +6,33 @@
         <div class="mapGrid">
             <div class="grid-container">
                 <script>
+                    const partial = 100 - {{practiced}}
                     for (var i=100; i>{{percent}}; i--) {
-                        var color = 'rgb(141, 146, 150)'
-                        if (i%8==0) {
-                            color = 'rgb(137, 108, 202)'
-                        } else if (i%8==1) {
-                            color = 'rgb(160, 82, 160)'
-                        } else if (i%8==2) {
-                            color = 'rgb(38, 98, 187)'
-                        } else if (i%8==3) {
-                            color = 'rgb(26, 190, 155)'
-                        } else if (i%8==4) {
-                            color ='rgb(62, 104, 196)'
-                            color = 'rgb(48, 87, 146)'
-                        } else if (i%8==5) {
-                            color = 'rgb(33, 154, 175)'
-                        } else if (i%8==6) {
-                            color = 'rgb(127, 80, 255)'
-                            color = 'rgb(141, 146, 150)'
+                        var color = 'rgb(141, 146, 150);'
+                        if (i <= partial) {
+                            color = 'white; opacity: 85%;'
                         } else {
-                            color = 'rgb(57, 31, 128)'
+                            if (i%8==0) {
+                                color = 'rgb(137, 108, 202);'
+                            } else if (i%8==1) {
+                                color = 'rgb(160, 82, 160);'
+                            } else if (i%8==2) {
+                                color = 'rgb(38, 98, 187);'
+                            } else if (i%8==3) {
+                                color = 'rgb(26, 190, 155);'
+                            } else if (i%8==4) {
+                                color ='rgb(62, 104, 196);'
+                                color = 'rgb(48, 87, 146);'
+                            } else if (i%8==5) {
+                                color = 'rgb(33, 154, 175);'
+                            } else if (i%8==6) {
+                                color = 'rgb(127, 80, 255);'
+                                color = 'rgb(141, 146, 150);'
+                            } else {
+                                color = 'rgb(57, 31, 128);'
+                            }
                         }
-                        var sqCSS = '.sq' + i + ' { background-color:' + color + '; color: black; border: 1px solid black; }'
+                        var sqCSS = '.sq' + i + ' { background-color:' + color + ' color: black; border: 1px solid black; }'
                         var style = document.createElement('style')
                         style.appendChild(document.createTextNode(sqCSS))
                         document.head.appendChild(style) 
@@ -35,7 +40,9 @@
                 </script>
             </div>
         </div>
-        <div class="percent">{{ percent }}% COMPLETE</div>
+        <div class="info" id="title">{{ title }}</div>
+        <div class="info" id="percent">{{ percent }}% COMPLETE</div>
+        <div class="info" id="practiced">{{ 100-practiced }}% PRACTICED</div>
     </div>
 
 <script>

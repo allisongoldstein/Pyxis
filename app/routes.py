@@ -1,3 +1,4 @@
+from lib2to3.pgen2.token import PERCENTEQUAL
 from os import curdir, stat_result
 from urllib.parse import urlparse
 from flask import render_template, flash, redirect, url_for
@@ -129,13 +130,23 @@ def deleteCard(cardID):
     db.session.commit()
     return redirect(url_for('viewCards'))
 
-
-
-@app.route('/map')
+@app.route('/selectMap')
 @login_required
-def map():
-    percent = 36
-    return render_template('map.html', title='Map', percent=percent)
+def selectMap():
+    targets = Target.query.filter().all()
+    maps = []
+    for target in targets:
+        stats = getStats(target.id)
+        maps.append(stats)
+    return render_template('selectMap.html', title='Select Map', maps=maps)
+
+@app.route('/<targetID>/map')
+@login_required
+def map(targetID):
+    thisMap = getStats(targetID)
+    percent = round(100-thisMap[2])
+    practiced = round(100-thisMap[3])
+    return render_template('map.html', title=thisMap[0].source, percent=percent, practiced=practiced)
 
 @app.route('/addTarget', methods=['GET', 'POST'])
 @login_required
@@ -376,7 +387,7 @@ def getStats(target=None):
         cardStats = [newCount, learningCount, familiarCount, expertCount]
         percent = round(((newCount + learningCount)/(targ.uniqueWordCount) * 100))
         unseen = round(((newCount)/(targ.uniqueWordCount) * 100))
-        stats.append((targ, cardStats, percent))
-        print(percent, unseen)
-
+        stats.append((targ, cardStats, percent, unseen))
+    if target:
+        return stats[0]
     return stats
