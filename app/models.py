@@ -23,7 +23,7 @@ class User(UserMixin, db.Model):
         return check_password_hash(self.password_hash, password)
 
 class Card(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.Integer, index=True, primary_key=True)
     word = db.Column(db.String(64), index=True, unique=True)
     translation = db.Column(db.String(1000), index=True)
     status = db.Column(db.String(64), index=True)
@@ -35,7 +35,7 @@ class Card(db.Model):
         return '<Card {}>'.format(self.word)
     
 class Target(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.Integer, index=True, primary_key=True)
     source = db.Column(db.String(100), index=True)
     content = db.Column(db.String(1000), index=True)
     category = db.Column(db.String(200), index=True)
@@ -46,17 +46,23 @@ class Target(db.Model):
         return '<Target {}>'.format(self.source)
 
 class Temp(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.Integer, index=True, primary_key=True)
     listString = db.Column(db.String(2000), index=True)
+    targetID = db.Column(db.Integer, db.ForeignKey('target.id'), index=True)
 
 class Ignore(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.Integer, index=True, primary_key=True)
     ignWord = db.Column(db.String(20), index=True)
 
 class Variant(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.Integer, index=True, primary_key=True)
     varWord = db.Column(db.String(20), index=True)
     standardID = db.Column(db.Integer, db.ForeignKey('card.id'))
+
+class Appearance(db.Model):
+    id = db.Column(db.Integer, index=True, primary_key=True)
+    wordID = db.Column(db.Integer, db.ForeignKey('card.id'), index=True)
+    targetID = db.Column(db.Integer, db.ForeignKey('target.id'), index=True)
 
 db.create_all()
 db.session.commit()

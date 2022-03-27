@@ -1,4 +1,4 @@
-from os import curdir
+from os import curdir, stat_result
 from urllib.parse import urlparse
 from flask import render_template, flash, redirect, url_for
 from app import app
@@ -8,11 +8,12 @@ from flask_login import logout_user
 from flask_login import login_required
 from flask import request
 from werkzeug.urls import url_parse
-from app.models import Card, User, Target, Temp, Ignore, Variant
+from app.models import Card, User, Target, Temp, Ignore, Variant, Appearance
 from app import db
 from app.forms import RegistrationForm, AddCard, EditCard, AddTarget, RepeatCard, CompleteCard
 from sqlalchemy import delete, cast
 from datetime import datetime, date, timedelta
+from  sqlalchemy.sql.expression import func, select
 import re
 
 @app.route('/')
@@ -128,6 +129,8 @@ def deleteCard(cardID):
     db.session.commit()
     return redirect(url_for('viewCards'))
 
+
+
 @app.route('/map')
 @login_required
 def map():
@@ -141,12 +144,15 @@ def addTarget():
     if form.validate_on_submit():
         wordList = parseContent(form.content.data)
         tLength = len(wordList)
-        wordList = wordCheck(wordList)
         target = Target(source=form.source.data, content=form.content.data, category=form.category.data, notes=form.notes.data, uniqueWordCount=tLength)
         db.session.add(target)
         db.session.commit()
+        wordList = wordCheck(wordList, target.id)
+        if not wordList:
+            flash('Target added, no new cards.')
+            return redirect(url_for('viewCards', title='View Cards'))
         wl = " ".join(wordList)
-        temp = Temp(listString=wl)
+        temp = Temp(listString=wl, targetID=target.id)
         db.session.add(temp)
         db.session.commit()
         return redirect(url_for('filterNewWords', id=temp.id))
@@ -181,15 +187,24 @@ def parseContent(content):
         wordList.extend(wl)
     return set(wordList)
 
-def wordCheck(words):
+def wordCheck(words, targetID):
+    target = Target.query.filter_by(id=targetID).first()
+    print('tttttttttt', target)
     newList = []
     for word in words:
         w = Card.query.filter_by(word=word).first()
         i = Ignore.query.filter_by(ignWord=word).first()
         v = Variant.query.filter_by(varWord=word).first()
         if w or i or v:
-            # add M:M count based on status
-            continue
+            if w:
+                newID = w.id
+            elif i:
+                newID = i.id
+            elif v:
+                newID = v.id
+            apr = Appearance(wordID=newID, targetID=target.id)
+            db.session.add(apr)
+            db.session.commit()
         else:
             newList.append(word)
     return newList
@@ -216,19 +231,26 @@ def filterNewWords(id):
                 standardForm = request.form[adtl]
                 translation = request.form[t]
                 vars.append((word, standardForm, translation))
-        addFromList(adds)
+        addFromList(adds, wl)
         ignoreFromList(igns)
-        variantsFromList(vars)
+        variantsFromList(vars, wl)
         flash('Target words sorted.')
         return redirect(url_for('viewCards'))
     return render_template('filterNewWords.html', title='Filter New Words', words=words)
 
-def addFromList(words):
+def addFromList(words, wlID=None, target=None):
+    if wlID:
+        target = Target.query.filter_by(id=wlID.targetID).first()
     for word in words:
         dueDate = date.today()
         card = Card(word=word[0], translation=word[1], status='new', nextReviewDate=dueDate, lastInterval=0)
         db.session.add(card)
         db.session.commit()
+        if target:
+            card = Card.query.filter_by(word=word[0]).first()
+            apr = Appearance(wordID=card.id, targetID=target.id)
+            db.session.add(apr)
+            db.session.commit()
     return
 
 def ignoreFromList(words):
@@ -238,7 +260,9 @@ def ignoreFromList(words):
         db.session.commit()
     return
 
-def variantsFromList(words):
+def variantsFromList(words, wlID=None, target=None):
+    if wlID:
+        target = Target.query.filter_by(id=wlID.targetID).first()
     for word in words:
         standard = word[1]
         translation = word[2]
@@ -250,6 +274,11 @@ def variantsFromList(words):
         variant = Variant(varWord=word[0], standardID=card.id)
         db.session.add(variant)
         db.session.commit()
+        if target:
+            card = Card.query.filter_by(word=standard).first()
+            apr = Appearance(wordID=card.id, targetID=target.id)
+            db.session.add(apr)
+            db.session.commit()
     return
 
 @app.route('/viewTargets')
@@ -303,7 +332,7 @@ def flashcards():
             card.lastInterval = 0
             db.session.commit()
             flashcards = getFlashcards()
-    return render_template('flashcards.html', title='Flashcards', flashcards=flashcards, repeatForm=repeatForm, completeForm=completeForm)
+    return render_template('flashcards.html', title='Flashcards', flashcards=flashcards, flashcard=flashcards[0], repeatForm=repeatForm, completeForm=completeForm)
 
 def getFlashcards():
     curDate = date.today()
@@ -313,6 +342,41 @@ def getFlashcards():
     return flashcards
 
 def getReviewCards():
-    reviewCards = db.session.query(Card).filter(Card.status=='repeat').all()
-    reviewCards = db.session.query(Card).filter(Card.lastInterval==2).all()
+    reviewCards = db.session.query(Card).filter(Card.status=='repeat').order_by(func.random())
+    # reviewCards = db.session.query(Card).filter(Card.lastInterval==2).all()
     return reviewCards
+
+@app.route('/viewStats')
+@login_required
+def viewStats():
+    stats = getStats()
+    return render_template('viewStats.html', title='View Stats', stats=stats)
+
+def getStats(target=None):
+    stats = []
+    if target:
+        targs = Target.query.filter(Target.id==target).all()
+    else:
+        targs = Target.query.filter().all()
+    for targ in targs:
+        cardStats = []
+        x = Appearance.query.filter(Appearance.targetID==targ.id).all()
+        newCount, learningCount, familiarCount, expertCount = 0, 0, 0, 0
+        for each in x:
+            card = Card.query.filter(Card.id==each.wordID).first()
+            if card:
+                if card.status == 'new':
+                    newCount += 1
+                elif card.status == 'learning' or card.status == 'repeat':
+                    learningCount += 1
+                elif card.status == 'familiar':
+                    familiarCount += 1
+                elif card.status == 'expert':
+                    expertCount += 1
+        cardStats = [newCount, learningCount, familiarCount, expertCount]
+        percent = round(((newCount + learningCount)/(targ.uniqueWordCount) * 100))
+        unseen = round(((newCount)/(targ.uniqueWordCount) * 100))
+        stats.append((targ, cardStats, percent))
+        print(percent, unseen)
+
+    return stats

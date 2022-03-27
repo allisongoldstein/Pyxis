@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="int">
+    <h1>Your Stats</h1>
+    <table>
+        <thead>
+            <th>Source</th>
+            <th>Unique Word Count</th>
+            <th>New</th>
+            <th>Learning</th>
+            <th>Familiar</th>
+            <th>Expert</th>
+            <th>% Remaining</th>
+        </thead>
+        <tbody>
+            {% for stat in stats %}
+            <tr>
+                <td>{{ stat[0].content }}</td>
+                <td>{{ stat[0].uniqueWordCount }}</td>
+                <td>{{ stat[1][0] }}</td>
+                <td>{{ stat[1][1] }}</td>
+                <td>{{ stat[1][2] }}</td>
+                <td>{{ stat[1][3] }}</td>
+                <td>{{ stat[2] }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+{% endblock %}

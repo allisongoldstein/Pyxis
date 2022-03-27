@@ -8,20 +8,24 @@
                 <script>
                     for (var i=100; i>{{percent}}; i--) {
                         var color = 'rgb(141, 146, 150)'
-                        if (i%7==0) {
+                        if (i%8==0) {
                             color = 'rgb(137, 108, 202)'
-                        } else if (i%7==1) {
+                        } else if (i%8==1) {
                             color = 'rgb(160, 82, 160)'
-                        } else if (i%7==2) {
+                        } else if (i%8==2) {
                             color = 'rgb(38, 98, 187)'
-                        } else if (i%7==3) {
+                        } else if (i%8==3) {
                             color = 'rgb(26, 190, 155)'
-                        } else if (i%7==4) {
+                        } else if (i%8==4) {
                             color ='rgb(62, 104, 196)'
-                        } else if (i%7==5) {
+                            color = 'rgb(48, 87, 146)'
+                        } else if (i%8==5) {
                             color = 'rgb(33, 154, 175)'
-                        } else {
+                        } else if (i%8==6) {
                             color = 'rgb(127, 80, 255)'
+                            color = 'rgb(141, 146, 150)'
+                        } else {
+                            color = 'rgb(57, 31, 128)'
                         }
                         var sqCSS = '.sq' + i + ' { background-color:' + color + '; color: black; border: 1px solid black; }'
                         var style = document.createElement('style')
