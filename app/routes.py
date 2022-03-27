@@ -1,5 +1,6 @@
 from lib2to3.pgen2.token import PERCENTEQUAL
 from os import curdir, stat_result
+import string
 from urllib.parse import urlparse
 from flask import render_template, flash, redirect, url_for
 from app import app
@@ -200,7 +201,6 @@ def parseContent(content):
 
 def wordCheck(words, targetID):
     target = Target.query.filter_by(id=targetID).first()
-    print('tttttttttt', target)
     newList = []
     for word in words:
         w = Card.query.filter_by(word=word).first()
@@ -343,6 +343,9 @@ def flashcards():
             card.lastInterval = 0
             db.session.commit()
             flashcards = getFlashcards()
+    if not flashcards:
+        flash('You have reviewed all due cards!')
+        return render_template('learn.html', title='Learn')
     return render_template('flashcards.html', title='Flashcards', flashcards=flashcards, flashcard=flashcards[0], repeatForm=repeatForm, completeForm=completeForm)
 
 def getFlashcards():
@@ -353,7 +356,7 @@ def getFlashcards():
     return flashcards
 
 def getReviewCards():
-    reviewCards = db.session.query(Card).filter(Card.status=='repeat').order_by(func.random())
+    reviewCards = db.session.query(Card).filter(Card.status=='repeat').order_by(func.random()).all()
     # reviewCards = db.session.query(Card).filter(Card.lastInterval==2).all()
     return reviewCards
 
