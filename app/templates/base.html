@@ -2,25 +2,26 @@
 <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 <html>
     <head>
-        <title>Language Map - {{ title }}</title>
+        <title>Pyxis - {{ title }}</title>
         <div>
             <div class="nav">
-            Language Map: 
-            <a class="navlink" href="/index">Home</a>
+            <b>Pyxis</b>
+            <a class="navlink" href="/viewCards">Home</a>
             {%if current_user.is_anonymous %}
             <div class="right">
                 <a class="navlink" href="/login">Login</a>
             </div>
             {% else %}
             <a class="navlink" href="/selectMap">Maps</a>
-            <a class="navlink"href="/viewCards">View Cards</a>
+            <a class="navlink"href="/viewCards">All Cards</a>
             <a class="navlink" href="/learn">Learn</a>
+            <a class="navlink" href="viewStats">Stats</a>
             
 
             <div class="right">
                 <a class="navlink" href="/addCard">Add Card</a>
-            <a class="navlink" href="/addTarget">Add Target</a>
-                <a class="navlink" href="/viewStats">View Stats</a>
+                <a class="navlink" href="/addTarget">Add Target</a>
+                <a class="navlink" href="/viewTargets">Manage Targets</a>
                 <a class="navlink" href="/settings">Settings</a>
                 <a class="navlink" href="/logout">Logout</a>
             </div>
@@ -29,6 +30,7 @@
         </div>
         </head>
         <body>
+            <div>
             {% with messages = get_flashed_messages() %}
             {% if messages %}
             <ul>
@@ -38,6 +40,7 @@
             </ul>
             {% endif %}
             {% endwith %}
+            </div>
             <div class="content">
             {% block content %}{% endblock %}
             </div>
