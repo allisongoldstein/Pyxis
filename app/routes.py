@@ -176,7 +176,7 @@ def addTarget():
 
 def parseContent(content):
     content = content.lower()
-    sentenceList = re.split(r"[.|!|\\?]", content)
+    sentenceList = re.split(r"[.|!|\\?|\n]", content)
     for i in range(len(sentenceList)):
         sentence = sentenceList[i]
         if sentence:
