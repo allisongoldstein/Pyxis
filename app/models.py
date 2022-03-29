@@ -24,12 +24,13 @@ class User(UserMixin, db.Model):
 
 class Card(db.Model):
     id = db.Column(db.Integer, index=True, primary_key=True)
-    word = db.Column(db.String(64), index=True, unique=True)
+    word = db.Column(db.String(64), index=True)
     translation = db.Column(db.String(1000), index=True)
     status = db.Column(db.String(64), index=True)
     nextReviewDate = db.Column(db.Date, index=True)
     lastInterval = db.Column(db.Integer)
     variants = db.relationship("Variant", backref='card', lazy=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
 
     def __repr__(self):
         return '<Card {}>'.format(self.word)
@@ -41,6 +42,7 @@ class Target(db.Model):
     category = db.Column(db.String(200), index=True)
     notes = db.Column(db.String(400), index=True)
     uniqueWordCount = db.Column(db.Integer)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
 
     def __repr__(self):
         return '<Target {}>'.format(self.source)
@@ -48,21 +50,25 @@ class Target(db.Model):
 class Temp(db.Model):
     id = db.Column(db.Integer, index=True, primary_key=True)
     listString = db.Column(db.String(2000), index=True)
-    targetID = db.Column(db.Integer, db.ForeignKey('target.id'), index=True)
+    target_id = db.Column(db.Integer, db.ForeignKey('target.id'), index=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
 
 class Ignore(db.Model):
     id = db.Column(db.Integer, index=True, primary_key=True)
     ignWord = db.Column(db.String(20), index=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
 
 class Variant(db.Model):
     id = db.Column(db.Integer, index=True, primary_key=True)
     varWord = db.Column(db.String(20), index=True)
-    standardID = db.Column(db.Integer, db.ForeignKey('card.id'))
+    standard_id = db.Column(db.Integer, db.ForeignKey('card.id'))
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
 
 class Appearance(db.Model):
     id = db.Column(db.Integer, index=True, primary_key=True)
-    wordID = db.Column(db.Integer, db.ForeignKey('card.id'), index=True)
-    targetID = db.Column(db.Integer, db.ForeignKey('target.id'), index=True)
+    word_id = db.Column(db.Integer, db.ForeignKey('card.id'), index=True)
+    target_id = db.Column(db.Integer, db.ForeignKey('target.id'), index=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
 
 db.create_all()
 db.session.commit()

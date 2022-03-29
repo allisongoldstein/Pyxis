@@ -35,11 +35,6 @@ class AddCard(FlaskForm):
     translation = StringField('Translation')
     submit = SubmitField('Add')
 
-    def validate_word(self, word):
-        w = Card.query.filter_by(word=word.data).first()
-        if w is not None:
-            raise ValidationError('Word already in deck.')
-
 class EditCard(FlaskForm):
     word = StringField('Word', validators=[DataRequired()])
     translation = StringField('Translation')
