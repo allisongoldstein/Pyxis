@@ -1,5 +1,6 @@
 from wsgiref import validate
 from flask import Flask
+from flask_login import current_user
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, BooleanField, SubmitField, TextAreaField
 from wtforms.validators import DataRequired, ValidationError, Email, EqualTo
@@ -34,6 +35,11 @@ class AddCard(FlaskForm):
     word = StringField('Word', validators=[DataRequired()])
     translation = StringField('Translation')
     submit = SubmitField('Add')
+
+    def validate_word(self, word):
+        w = Card.query.filter_by(word=word.data, user_id=current_user.id).first()
+        if w is not None:
+            raise ValidationError('Word already in deck.')
 
 class EditCard(FlaskForm):
     word = StringField('Word', validators=[DataRequired()])
