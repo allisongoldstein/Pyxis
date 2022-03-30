@@ -13,3 +13,12 @@ login = LoginManager(app)
 login.login_view = 'login'
 
 from app import routes, models
+
+from . import cards
+app.register_blueprint(cards.bp)
+
+from . import targets
+app.register_blueprint(targets.bp)
+
+from . import maps
+app.register_blueprint(maps.bp)
