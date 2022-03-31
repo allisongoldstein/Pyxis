@@ -12,13 +12,17 @@ migrate = Migrate(app, db)
 login = LoginManager(app)
 login.login_view = 'login'
 
-from app import routes, models
+from app import models
+from app.routes import routes
 
-from . import cards
+from app.routes import user
+app.register_blueprint(user.bp)
+
+from app.routes import cards
 app.register_blueprint(cards.bp)
 
-from . import targets
+from app.routes import targets
 app.register_blueprint(targets.bp)
 
-from . import maps
+from app.routes import maps
 app.register_blueprint(maps.bp)

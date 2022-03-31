@@ -13,7 +13,7 @@ def selectMap():
     for target in targets:
         stats = getStats(target.id)
         maps.append(stats)
-    return render_template('selectMap.html', title='Select Map', maps=maps)
+    return render_template('maps/selectMap.html', title='Select Map', maps=maps)
 
 @bp.route('/<target_id>/map')
 @login_required
@@ -21,4 +21,4 @@ def map(target_id):
     thisMap = getStats(target_id)
     percent = round(100-thisMap[2])
     practiced = round(100-thisMap[3])
-    return render_template('map.html', title=thisMap[0].source, percent=percent, practiced=practiced)
+    return render_template('maps/map.html', title=thisMap[0].source, percent=percent, practiced=practiced)

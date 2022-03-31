@@ -26,7 +26,7 @@ def addTarget():
         db.session.add(temp)
         db.session.commit()
         return redirect(url_for('targets.filterNewWords', id=temp.id))
-    return render_template('addTarget.html', title='Add Target', form=form)
+    return render_template('targets/addTarget.html', title='Add Target', form=form)
 
 @bp.route('/<id>/filterNewWords.html', methods=['GET', 'POST'])
 @login_required
@@ -55,13 +55,13 @@ def filterNewWords(id):
         variantsFromList(vars, wl)
         flash('Target words sorted.')
         return redirect(url_for('cards.viewCards'))
-    return render_template('filterNewWords.html', title='Filter New Words', words=words)
+    return render_template('targets/filterNewWords.html', title='Filter New Words', words=words)
 
 @bp.route('/viewTargets')
 @login_required
 def viewTargets():
     targets = Target.query.filter_by(user_id=current_user.id)
-    return render_template('viewTargets.html', title='View Targets', targets=targets)
+    return render_template('targets/viewTargets.html', title='View Targets', targets=targets)
 
 @bp.route('/<target_id>/deleteTarget', methods=["POST"])
 @login_required
