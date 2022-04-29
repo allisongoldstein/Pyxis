@@ -12,6 +12,13 @@ class User(UserMixin, db.Model):
     username = db.Column(db.String(64), index=True, unique=True)
     email = db.Column(db.String(120), index=True, unique=True)
     password_hash = db.Column(db.String(128))
+    cards = db.relationship("Card", cascade="all,delete", backref='user')
+    targets = db.relationship("Target", cascade="all,delete", backref='user')
+    ignores = db.relationship("Ignore", cascade="all,delete", backref='user')
+    variants = db.relationship("Variant", cascade="all,delete", backref='user')
+    temps = db.relationship("Temp", cascade="all,delete", backref='user')
+    appearances = db.relationship("Appearance", cascade="all,delete", backref='user')
+
 
     def __repr__(self):
         return '<User {}>'.format(self.username)
@@ -29,8 +36,9 @@ class Card(db.Model):
     status = db.Column(db.String(64), index=True)
     nextReviewDate = db.Column(db.Date, index=True)
     lastInterval = db.Column(db.Integer)
-    variants = db.relationship("Variant", backref='card', lazy=True)
+    variants = db.relationship("Variant", cascade="all,delete", backref='card')
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    appearances =  db.relationship("Appearance", cascade="all,delete", backref='card')
 
     def __repr__(self):
         return '<Card {}>'.format(self.word)
@@ -43,6 +51,8 @@ class Target(db.Model):
     notes = db.Column(db.String(400), index=True)
     uniqueWordCount = db.Column(db.Integer)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    temps = db.relationship("Temp", cascade="all,delete", backref='target')
+    appearances =  db.relationship("Appearance", cascade="all,delete", backref='target')
 
     def __repr__(self):
         return '<Target {}>'.format(self.source)
